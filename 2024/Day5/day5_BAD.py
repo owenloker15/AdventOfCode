@@ -13,19 +13,31 @@ with open("day5input.txt", "r") as file:
 
 idx = 0
 line = lines[idx]
-order = {}
+order = []
 while line != '\n':
     line = line.strip()
     first, second = line.split('|')
     
-    if not second in order:
-        order[second] = [first]
-    else:
-        if not first in order[second]:
-            order[second].append(first)
+    # Add first to beginning of the order
+    if first not in order:
+        order.insert(0, first)
+    
+    # Add second to end of the order
+    if second not in order:
+        order.append(second)
+    
+    # Make sure first is in front of second, if its not, put it in front of second
+    first_index = order.index(first)
+    second_index = order.index(second)
+    if first_index > second_index:
+        order.pop(first_index)
+        order.insert(second_index, first)
     
     idx += 1
     line = lines[idx]
+    
+# Convert to list of ints
+order = [int(item) for item in order]
 
 sum = 0
 
@@ -35,6 +47,7 @@ print(order)
 for line in lines[idx + 1:len(lines)]:
     line = line.strip()
     pages = line.split(',')
+    pages = [int(page) for page in pages]
     
     # if page is valid, add the middle one to the sum
     if valid_pages(order, pages):
